@@ -18,9 +18,8 @@ else:
         "http://127.0.0.1:3000/",
     ]
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS")
-
-
+ALLOWED_HOSTS = ["*"]
+print(os.getenv("ALLOWED_HOSTS"))
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -133,7 +132,7 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
-    "SIGNING_KEY": "complexsigningkey",  # generate a key and replace me
+    "SIGNING_KEY": "complexsigningkeyyyyyyyyyyyyyyyyyyyyyyyy",  # generate a key and replace me
     "ALGORITHM": "HS512",
 }
 ACCOUNT_EMAIL_REQUIRED = False
