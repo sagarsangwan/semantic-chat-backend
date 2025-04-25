@@ -2,13 +2,28 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
-
+from django.utils.text import slugify
 class ChatRoom(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    name = models.CharField(max_length=255, null=True, blank=True)
+
     participants = models.ManyToManyField(User, related_name="chat_rooms")
     is_group = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+    def __str__(self):
+        return f"{self.name}"
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name+str(self.id))
+        if not self.name:
+            self.name = self.participants.first().username
+        super().save(*args, **kwargs)
+    
+    
+    
 
 
 SUMMARY_TAG_CHOICES = [
@@ -29,6 +44,7 @@ SUMMARY_TAG_CHOICES = [
     ("stressed", "Stressed"),
     ("hopeful", "Hopeful"),
 ]
+
 
 AI_SUGGESTION_FEEDBACK_CHOICES = [
     {"accepted", "Accepted"},
@@ -52,11 +68,7 @@ class ChatMessage(models.Model):
 
     sentiment = models.CharField(
         max_length=20,
-        choices=[
-            ("positive", "Positive"),
-            ("negative", "Negative"),
-            ("neutral", "Neutral"),
-        ],
+        choices=SUMMARY_TAG_CHOICES
         null=True,
         blank=True,
     )
@@ -71,6 +83,10 @@ class ChatMessage(models.Model):
     )
     source = models.CharField(max_length=10, default="user")
 
+    def __str__(self):
+        return f"{ {self.sender.username} - {self.message}}"
+    
+
 
 class ChatSession(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
@@ -78,3 +94,6 @@ class ChatSession(models.Model):
     end_time = models.DateTimeField()
     summary = models.TextField(blank=True, null=True)
     mood_overview = models.CharField(max_length=30, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.room.name} - {self.start_time} - {self.end_time}"
