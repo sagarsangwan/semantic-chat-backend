@@ -19,7 +19,6 @@ else:
     ]
 
 ALLOWED_HOSTS = ["*"]
-print(os.getenv("ALLOWED_HOSTS"))
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -47,7 +46,6 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -114,7 +112,7 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
+# ACCOUNT_SIGNUP_FIELDS = ["username", "email", "password1", "password2"]
 
 STATIC_URL = "static/"
 
@@ -132,17 +130,23 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
-    "SIGNING_KEY": "complexsigningkeyyyyyyyyyyyyyyyyyyyyyyyy",  # generate a key and replace me
+    "SIGNING_KEY": "complexsigningkeyyyyyyyyyyyyyyyyyyyyyyyy",
     "ALGORITHM": "HS512",
 }
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_EMAIL_VERIFICATION = "none"
+# ACCOUNT_EMAIL_VERIFICATION = "none"
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
+    "SIGNUP_FIELDS": {
+        "username": {"required": True},
+        "email": {"required": False},  # set to True if you want to require email
+        "password1": {"required": True},
+        "password2": {"required": True},
+    },
 }
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
+        "EMAIL_AUTHENTICATION": True,
         "APP": {
             "client_id": os.getenv("GOOGLE_CLIENT_ID"),
             "secret": os.getenv("GOOGLE_CLIENT_SECRET"),
