@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 import uuid
 
 from django.utils.text import slugify
+
+
 class ChatRoom(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = models.CharField(max_length=255, null=True, blank=True)
@@ -12,48 +14,46 @@ class ChatRoom(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
+
     def __str__(self):
         return f"{self.name}"
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name+str(self.id))
+            self.slug = slugify(self.name + str(self.id))
         if not self.name:
             self.name = self.participants.first().username
         super().save(*args, **kwargs)
-    
-    
-    
-
-
-SUMMARY_TAG_CHOICES = [
-    ("neutral", "Neutral"),
-    ("casual", "Casual"),
-    ("friendly", "Friendly"),
-    ("supportive", "Supportive"),
-    ("romantic", "Romantic"),
-    ("happy", "Happy"),
-    ("tense", "Tense"),
-    ("argumentative", "Argumentative"),
-    ("angry", "Angry"),
-    ("sad", "Sad"),
-    ("anxious", "Anxious"),
-    ("excited", "Excited"),
-    ("deep", "Deep"),
-    ("grateful", "Grateful"),
-    ("stressed", "Stressed"),
-    ("hopeful", "Hopeful"),
-]
 
 
 AI_SUGGESTION_FEEDBACK_CHOICES = [
-    {"accepted", "Accepted"},
-    {"rejected", "Rejected"},
-    {"skipped", "Skipped"},
+    ("accepted", "Accepted"),
+    ("rejected", "Rejected"),
+    ("skipped", "Skipped"),
 ]
 
 
 class ChatMessage(models.Model):
+
+    SUMMARY_TAG_CHOICES = [
+        ("neutral", "Neutral"),
+        ("casual", "Casual"),
+        ("friendly", "Friendly"),
+        ("supportive", "Supportive"),
+        ("romantic", "Romantic"),
+        ("happy", "Happy"),
+        ("tense", "Tense"),
+        ("argumentative", "Argumentative"),
+        ("angry", "Angry"),
+        ("sad", "Sad"),
+        ("anxious", "Anxious"),
+        ("excited", "Excited"),
+        ("deep", "Deep"),
+        ("grateful", "Grateful"),
+        ("stressed", "Stressed"),
+        ("hopeful", "Hopeful"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     room = models.ForeignKey(
         ChatRoom, on_delete=models.CASCADE, related_name="messages"
@@ -68,7 +68,7 @@ class ChatMessage(models.Model):
 
     sentiment = models.CharField(
         max_length=20,
-        choices=SUMMARY_TAG_CHOICES
+        choices=SUMMARY_TAG_CHOICES,
         null=True,
         blank=True,
     )
@@ -85,7 +85,6 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"{ {self.sender.username} - {self.message}}"
-    
 
 
 class ChatSession(models.Model):
