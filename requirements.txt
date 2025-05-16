@@ -1,5 +1,5 @@
 
-"dj-rest-auth[with_social]"
+dj-rest-auth[with_social]
 
 asgiref==3.8.1
 attrs==25.3.0
@@ -31,7 +31,7 @@ pycparser==2.22
 PyJWT==2.9.0
 pyOpenSSL==25.0.0
 python-dotenv==1.1.0
-redis==5.2.1
+redis==6.1.0
 requests==2.32.3
 requests-oauthlib==2.0.0
 service-identity==24.2.0
