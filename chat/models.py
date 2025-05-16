@@ -16,14 +16,13 @@ class ChatRoom(models.Model):
     slug = models.SlugField(unique=True, null=True, blank=True)
 
     def __str__(self):
+
         return f"{self.name}"
 
     def save(self, *args, **kwargs):
-        # if not self.name:
-        #     print(self.participants)
-        #     self.name = self.participants.first().username
         if not self.slug:
-            self.slug = slugify(self.name + str(self.id))
+            base_name = self.name or str(self.id)
+            self.slug = slugify(base_name + str(self.id))
         super().save(*args, **kwargs)
 
 
