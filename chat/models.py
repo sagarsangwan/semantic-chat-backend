@@ -16,13 +16,13 @@ class ChatRoom(models.Model):
     slug = models.SlugField(unique=True, null=True, blank=True)
 
     def __str__(self):
+
         return f"{self.name}"
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name + str(self.id))
-        if not self.name:
-            self.name = self.participants.first().username
+            base_name = self.name or str(self.id)
+            self.slug = slugify(base_name + str(self.id))
         super().save(*args, **kwargs)
 
 
@@ -56,7 +56,11 @@ class ChatMessage(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     room = models.ForeignKey(
-        ChatRoom, on_delete=models.CASCADE, related_name="messages"
+        ChatRoom,
+        on_delete=models.CASCADE,
+        related_name="messages",
+        null=True,
+        blank=True,
     )
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
     message = models.TextField()
@@ -84,7 +88,7 @@ class ChatMessage(models.Model):
     source = models.CharField(max_length=10, default="user")
 
     def __str__(self):
-        return f"{ {self.sender.username} - {self.message}}"
+        return f"{self.sender.username} - {self.message}"
 
 
 class ChatSession(models.Model):

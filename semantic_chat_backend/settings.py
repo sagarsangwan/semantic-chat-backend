@@ -75,6 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "semantic_chat_backend.wsgi.application"
+
 ASGI_APPLICATION = "semantic_chat_backend.asgi.application"
 
 CHANNEL_LAYERS = {
