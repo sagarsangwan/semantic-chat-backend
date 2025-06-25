@@ -1,33 +1,30 @@
-from django.shortcuts import render
-from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+from rest_framework.response import Response
+from rest_framework import status
 
-from .models import ChatRoom
-from .serializers import ChatRoomSerializer
-from rest_framework.exceptions import PermissionDenied
+from .models import ChatMessage, ChatRoom
+from .serializers import ChatRoomListSerializer, ChatRoomDetailsSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 
-# class
-class ChatRoomViewSet(viewsets.ModelViewSet):
-    # queryset = ChatRoom.objects.all()
-    serializer_class = ChatRoomSerializer
-    permission_classes = [IsAuthenticated]
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def all_chatrooms_view(request):
+    if request.method == "GET":
+        chatrooms = ChatRoom.objects.filter(participants=request.user)
+        serializer = ChatRoomListSerializer(
+            chatrooms, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
 
-    def get_queryset(self):
-        return ChatRoom.objects.filter(participants=self.request.user)
 
-    def get_object(self):
-        obj = super().get_object()
-        if self.request.user not in obj.participants.all():
-            raise PermissionDenied("You do not have access to ths room")
-        return obj
-
-    def perform_create(self, serializer):
-        room = serializer.save()
-        room.participants.add(self.request.user)
-        if not room.is_group and not room.name:
-            room.name = ", ".join([user.username for user in room.participants.all()])
-            print(room.name)
-            room.save()
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def chatroom_view(request, chatroom_id):
+    if request.method == "GET":
+        print(chatroom_id)
+        chatrooms = ChatRoom.objects.get(id=chatroom_id)
+        serializer = ChatRoomDetailsSerializer(chatrooms, context={"request": request})
+        return Response(serializer.data)

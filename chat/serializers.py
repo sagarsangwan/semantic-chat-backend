@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "username", "social_accounts"]
 
 
-class ChatRoomSerializer(serializers.ModelSerializer):
+class ChatRoomListSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
     other_participant = serializers.SerializerMethodField()
 
@@ -67,8 +67,43 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
 
 class ChatMessagesSerializer(serializers.ModelSerializer):
-    participants = UserSerializer(many=True, read_only=True)
+    # participants = UserSerializer(many=True, read_only=True)
+    # chatroom = ChatRoomSerializer(read_only=True)
+    sender = UserSerializer(read_only=True)
 
     class Meta:
         model = ChatMessage
+        # fields = "__all__"
         fields = "__all__"
+
+
+class ChatRoomDetailsSerializer(serializers.ModelSerializer):
+    participants = UserSerializer(many=True, read_only=True)
+    other_participant = serializers.SerializerMethodField()
+    messages = ChatMessagesSerializer(many=True)
+
+    class Meta:
+        model = ChatRoom
+        fields = "__all__"
+
+    def get_other_participant(self, obj):
+        """
+        Returns the serialized details of the other participant in a one-on-one chat room.
+        """
+        if obj.is_group:
+            return None
+
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            current_user = request.user
+            other_participant = None
+            for participant in obj.participants.all():
+                if participant != current_user:
+                    other_participant = participant
+                    break
+            if other_participant:
+                serializer = UserSerializer(other_participant, context=self.context)
+
+                return serializer.data
+                # return other_participant.social_account.extra_data
+        return None
