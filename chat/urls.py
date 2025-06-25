@@ -1,9 +1,9 @@
-from .views import ChatRoomViewSet
-from rest_framework.routers import DefaultRouter
-from django.urls import path, include
+from .views import chatroom_view, all_chatrooms_view
+from django.urls import path
 
-router = DefaultRouter()
-
-router.register(r"chatrooms", ChatRoomViewSet, basename="chatroom")
-
-urlpatterns = [path("", include(router.urls))]
+urlpatterns = [
+    path("chatrooms/", all_chatrooms_view, name="chatroom_list_create_view"),
+    path(
+        "chatrooms/<uuid:chatroom_id>/", chatroom_view, name="chatroom_list_create_view"
+    ),
+]
