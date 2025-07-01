@@ -66,6 +66,12 @@ class ChatRoomListSerializer(serializers.ModelSerializer):
         return None
 
 
+class ChatMessageCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = "__all__"
+
+
 class ChatMessagesSerializer(serializers.ModelSerializer):
     # participants = UserSerializer(many=True, read_only=True)
     # chatroom = ChatRoomSerializer(read_only=True)
