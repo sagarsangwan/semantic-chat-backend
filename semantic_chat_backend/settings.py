@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "corsheaders",
     "chat",
+    # "django-filter",
 ]
 
 MIDDLEWARE = [
@@ -175,3 +176,14 @@ SOCIALACCOUNT_PROVIDERS = {
         "VERIFIED_EMAIL": True,
     },
 }
+
+
+# Celery configssssss
+CELERY_BROKER_URL = "redis://localhost:6379/0"  # Redis as the broker
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "Australia/Tasmania"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
