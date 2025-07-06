@@ -1,5 +1,6 @@
 from rest_framework import serializers
-
+from rest_framework import serializers
+import uuid
 
 from .models import ChatMessage, ChatRoom
 from django.contrib.auth.models import User
@@ -75,6 +76,8 @@ class ChatMessageCreateSerializer(serializers.ModelSerializer):
 class ChatMessagesSerializer(serializers.ModelSerializer):
     # participants = UserSerializer(many=True, read_only=True)
     # chatroom = ChatRoomSerializer(read_only=True)
+    # id = serializers.UUIDField(format="hex", read_only=True)  # or use format="string"
+
     sender = UserSerializer(read_only=True)
 
     class Meta:
@@ -96,8 +99,8 @@ class ChatRoomDetailsSerializer(serializers.ModelSerializer):
         """
         Returns the serialized details of the other participant in a one-on-one chat room.
         """
-        if obj.is_group:
-            return None
+        # if obj.is_group:
+        #     return None
 
         request = self.context.get("request")
         if request and request.user.is_authenticated:
